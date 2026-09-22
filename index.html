@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Learning by Doing - 後端工程師的 LLM 應用入門</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🤖 AI Learning by Doing</h1>
+            <p class="subtitle">後端工程師的 LLM 應用入門 — 每週一個小專案</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 進度條 -->
+        <section class="progress-section">
+            <div class="progress-info">
+                <span>學習進度</span>
+                <span id="progress-text">0 / 8 週完成</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <!-- 課程列表 -->
+        <section class="courses-section">
+            <h2>📚 課程列表</h2>
+            <div class="courses-grid" id="courses-grid">
+                <!-- 課程卡片會由 JavaScript 動態生成 -->
+            </div>
+        </section>
+
+        <!-- 課程內容區 -->
+        <section class="course-content" id="course-content" style="display: none;">
+            <button class="back-btn" onclick="showHome()">← 返回列表</button>
+            <div id="course-detail">
+                <!-- 課程內容會由 JavaScript 動態生成 -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>🚀 每週一個小專案，30-45 分鐘可完成</p>
+            <p class="copyright">© 2026 AI Learning by Doing</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
