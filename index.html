@@ -153,6 +153,16 @@
     }
     
     function showAddForm() {
+        // 清空表單
+        document.getElementById('new-week').value = '';
+        document.getElementById('new-week').disabled = false;
+        document.getElementById('new-title').value = '';
+        document.getElementById('new-desc').value = '';
+        document.getElementById('new-tags').value = '';
+        document.getElementById('new-time').value = '';
+        document.getElementById('new-video').value = '';
+        document.getElementById('new-content').value = '';
+        document.querySelector('#add-form h3').textContent = '➕ 新增課程';
         document.getElementById('add-form').style.display = 'block';
     }
     
@@ -165,7 +175,10 @@
                     <strong>Week ${c.week}</strong> - ${c.title}
                     <div style="font-size: 0.85rem; color: #888;">${c.tags.join(', ')} | ${c.time}</div>
                 </div>
-                <button onclick="deleteCourse(${c.week})" style="background: #ff5252; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">🗑️ 刪除</button>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="editCourse(${c.week})" style="background: #ff9800; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">✏️ 編輯</button>
+                    <button onclick="deleteCourse(${c.week})" style="background: #ff5252; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">🗑️ 刪除</button>
+                </div>
             </div>
         `).join('');
     }
@@ -213,6 +226,26 @@
         renderCourses();
         updateProgress();
         alert('課程已儲存！');
+    }
+    
+    function editCourse(week) {
+        const courses = getCourses();
+        const course = courses.find(c => c.week === week);
+        if (!course) return;
+        
+        // 填入表單
+        document.getElementById('new-week').value = course.week;
+        document.getElementById('new-week').disabled = true; // 週次不能改
+        document.getElementById('new-title').value = course.title;
+        document.getElementById('new-desc').value = course.desc;
+        document.getElementById('new-tags').value = course.tags.join(', ');
+        document.getElementById('new-time').value = course.time;
+        document.getElementById('new-video').value = course.video || '';
+        document.getElementById('new-content').value = course.content || '';
+        
+        // 顯示表單，標題改為編輯
+        document.getElementById('add-form').style.display = 'block';
+        document.querySelector('#add-form h3').textContent = '✏️ 編輯課程 (Week ' + week + ')';
     }
     
     function deleteCourse(week) {
