@@ -43,6 +43,7 @@
             <h1>🤖 AI Learning by Doing</h1>
             <p class="subtitle">後端工程師的 LLM 應用入門 — 每週一個小專案</p>
             <p style="color: #00d4ff; margin-top: 10px;">🎯 使用 Google Gemini API（免費額度）</p>
+            <button onclick="showAdmin()" style="margin-top: 15px; background: #2a2a4a; color: #fff; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">⚙️ 管理課程</button>
         </div>
     </header>
 
@@ -75,9 +76,155 @@
         </div>
     </footer>
 
+    <!-- 管理課程 Modal -->
+    <div id="admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow: auto;">
+        <div style="background: #1a1a2e; max-width: 800px; margin: 50px auto; padding: 30px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color: #00d4ff;">⚙️ 管理課程</h2>
+            <button onclick="showAddForm()" style="background: #00c853; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin: 10px 5px 10px 0;">➕ 新增課程</button>
+            <button onclick="closeAdmin()" style="background: #666; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">✖ 關閉</button>
+            
+            <div id="course-list" style="margin-top: 20px;"></div>
+            
+            <!-- 新增課程表單 -->
+            <div id="add-form" style="display: none; margin-top: 30px; padding: 20px; background: #16213e; border-radius: 8px;">
+                <h3 style="color: #00d4ff;">➕ 新增課程</h3>
+                <div style="margin: 15px 0;">
+                    <label style="display: block; margin-bottom: 5px;">週次 (week):</label>
+                    <input type="number" id="new-week" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px;">
+                </div>
+                <div style="margin: 15px 0;">
+                    <label style="display: block; margin-bottom: 5px;">標題 (title):</label>
+                    <input type="text" id="new-title" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px;">
+                </div>
+                <div style="margin: 15px 0;">
+                    <label style="display: block; margin-bottom: 5px;">描述 (desc):</label>
+                    <textarea id="new-desc" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px; rows: 2"></textarea>
+                </div>
+                <div style="margin: 15px 0;">
+                    <label style="display: block; margin-bottom: 5px;">標籤 (tags，多個用逗號分隔):</label>
+                    <input type="text" id="new-tags" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px;">
+                </div>
+                <div style="margin: 15px 0;">
+                    <label style="display: block; margin-bottom: 5px;">時間 (time):</label>
+                    <input type="text" id="new-time" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px;">
+                </div>
+                <div style="margin: 15px 0;">
+                    <label style="display: block; margin-bottom: 5px;">YouTube 影片連結:</label>
+                    <input type="text" id="new-video" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px;" placeholder="https://youtu.be/xxx">
+                </div>
+                <div style="margin: 15px 0;">
+                    <label style="display: block; margin-bottom: 5px;">教學內容 (HTML):</label>
+                    <textarea id="new-content" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px; rows: 5"></textarea>
+                </div>
+                <button onclick="addCourse()" style="background: #00d4ff; color: #0f0f1a; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">💾 儲存課程</button>
+                <button onclick="document.getElementById('add-form').style.display='none'" style="background: #666; color: #fff; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer;">取消</button>
+            </div>
+        </div>
+    </div>
+
     <script src="courses.js"></script>
     <script>
     const STORAGE_KEY = 'ai-learning-progress';
+    const COURSES_KEY = 'ai-courses-data';
+    
+    // 從 localStorage 載入課程，沒有則用預設
+    function getCourses() {
+        const stored = localStorage.getItem(COURSES_KEY);
+        if (stored) {
+            return JSON.parse(stored);
+        }
+        // 儲存預設課程到 localStorage
+        localStorage.setItem(COURSES_KEY, JSON.stringify(COURSES));
+        return COURSES;
+    }
+    
+    function saveCourses(courses) {
+        localStorage.setItem(COURSES_KEY, JSON.stringify(courses));
+    }
+    
+    function showAdmin() {
+        document.getElementById('admin-modal').style.display = 'block';
+        renderCourseList();
+    }
+    
+    function closeAdmin() {
+        document.getElementById('admin-modal').style.display = 'none';
+        document.getElementById('add-form').style.display = 'none';
+    }
+    
+    function showAddForm() {
+        document.getElementById('add-form').style.display = 'block';
+    }
+    
+    function renderCourseList() {
+        const courses = getCourses();
+        const list = document.getElementById('course-list');
+        list.innerHTML = courses.map(c => `
+            <div style="background: #16213e; padding: 15px; margin: 10px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Week ${c.week}</strong> - ${c.title}
+                    <div style="font-size: 0.85rem; color: #888;">${c.tags.join(', ')} | ${c.time}</div>
+                </div>
+                <button onclick="deleteCourse(${c.week})" style="background: #ff5252; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">🗑️ 刪除</button>
+            </div>
+        `).join('');
+    }
+    
+    function addCourse() {
+        const week = parseInt(document.getElementById('new-week').value);
+        const title = document.getElementById('new-title').value;
+        const desc = document.getElementById('new-desc').value;
+        const tags = document.getElementById('new-tags').value.split(',').map(t => t.trim());
+        const time = document.getElementById('new-time').value;
+        const video = document.getElementById('new-video').value;
+        const content = document.getElementById('new-content').value;
+        
+        if (!week || !title) {
+            alert('請填寫週次和標題');
+            return;
+        }
+        
+        const courses = getCourses();
+        
+        // 檢查週次是否已存在
+        const existing = courses.findIndex(c => c.week === week);
+        if (existing >= 0) {
+            courses[existing] = { week, title, desc, tags, time, video, content, quiz: [] };
+        } else {
+            courses.push({ week, title, desc, tags, time, video, content, quiz: [] });
+        }
+        
+        // 按週次排序
+        courses.sort((a, b) => a.week - b.week);
+        
+        saveCourses(courses);
+        renderCourseList();
+        
+        // 清空表單
+        document.getElementById('new-week').value = '';
+        document.getElementById('new-title').value = '';
+        document.getElementById('new-desc').value = '';
+        document.getElementById('new-tags').value = '';
+        document.getElementById('new-time').value = '';
+        document.getElementById('new-video').value = '';
+        document.getElementById('new-content').value = '';
+        
+        document.getElementById('add-form').style.display = 'none';
+        renderCourses();
+        updateProgress();
+        alert('課程已儲存！');
+    }
+    
+    function deleteCourse(week) {
+        if (!confirm('確定要刪除 Week ' + week + ' 嗎？')) return;
+        
+        let courses = getCourses();
+        courses = courses.filter(c => c.week !== week);
+        saveCourses(courses);
+        renderCourseList();
+        renderCourses();
+        updateProgress();
+    }
     
     document.addEventListener('DOMContentLoaded', () => {
         renderCourses();
@@ -103,8 +250,9 @@
     }
     
     function renderCourses() {
+        const courses = getCourses();
         const grid = document.getElementById('courses-grid');
-        grid.innerHTML = COURSES.map(course => `
+        grid.innerHTML = courses.map(course => `
             <div class="course-card" onclick="showCourse(${course.week})">
                 <div class="week-number">Week ${course.week}</div>
                 <h3>${course.title}</h3>
@@ -118,7 +266,8 @@
     }
     
     function showCourse(weekId) {
-        const course = COURSES.find(c => c.week === weekId);
+        const courses = getCourses();
+        const course = courses.find(c => c.week === weekId);
         if (!course) return;
         
         const container = document.getElementById('course-container');
@@ -203,7 +352,8 @@
     }
     
     function submitQuiz(weekId) {
-        const course = COURSES.find(c => c.week === weekId);
+        const courses = getCourses();
+        const course = courses.find(c => c.week === weekId);
         const container = document.getElementById('quiz-' + weekId);
         const questions = container.querySelectorAll('.quiz-question');
         let correct = 0;
