@@ -81,6 +81,7 @@
         <div style="background: #1a1a2e; max-width: 800px; margin: 50px auto; padding: 30px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
             <h2 style="color: #00d4ff;">⚙️ 管理課程</h2>
             <button onclick="showAddForm()" style="background: #00c853; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin: 10px 5px 10px 0;">➕ 新增課程</button>
+            <button onclick="resetCourses()" style="background: #ff9800; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin: 10px 5px 10px 0;">🔄 重置課程</button>
             <button onclick="closeAdmin()" style="background: #666; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">✖ 關閉</button>
             
             <div id="course-list" style="margin-top: 20px;"></div>
@@ -131,7 +132,11 @@
     function getCourses() {
         const stored = localStorage.getItem(COURSES_KEY);
         if (stored) {
-            return JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            // 如果儲存的課程少於伺服器上的，使用伺服器版本
+            if (parsed.length >= COURSES.length) {
+                return parsed;
+            }
         }
         // 儲存預設課程到 localStorage
         localStorage.setItem(COURSES_KEY, JSON.stringify(COURSES));
@@ -140,6 +145,13 @@
     
     function saveCourses(courses) {
         localStorage.setItem(COURSES_KEY, JSON.stringify(courses));
+    }
+    
+    // 強制更新課程資料（管理員用）
+    function resetCourses() {
+        localStorage.removeItem(COURSES_KEY);
+        renderCourses();
+        alert('課程已重置為最新版本！');
     }
     
     function showAdmin() {
