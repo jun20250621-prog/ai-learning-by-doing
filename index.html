@@ -290,7 +290,7 @@
         const completed = getProgress();
         const total = COURSES.length;
         const percent = Math.round((completed.length / total) * 100);
-        document.getElementById('progress-text').textContent = completed.length + ' / ' + total + ' 週完成';
+        document.getElementById('progress-text').textContent = completed.length + ' / ' + total + ' 天完成';
         document.getElementById('progress-fill').style.width = percent + '%';
     }
     
@@ -384,7 +384,7 @@
         content.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         
         btn.classList.add('active');
-        document.getElementById('tab-' + weekId + '-' + tab).classList.add('active');
+        document.getElementById('tab-' + dayId + '-' + tab).classList.add('active');
     }
 
     let selectedAnswers = {};
