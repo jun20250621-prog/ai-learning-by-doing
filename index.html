@@ -51,7 +51,7 @@
         <section class="progress-section">
             <div class="progress-info">
                 <span>學習進度</span>
-                <span id="progress-text">0 / 8 週完成</span>
+                <span id="progress-text">0 / 28 天完成</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
@@ -89,7 +89,7 @@
             <div id="add-form" style="display: none; margin-top: 30px; padding: 20px; background: #16213e; border-radius: 8px;">
                 <h3 style="color: #00d4ff;">➕ 新增課程</h3>
                 <div style="margin: 15px 0;">
-                    <label style="display: block; margin-bottom: 5px;">週次 (week):</label>
+                    <label style="display: block; margin-bottom: 5px;">天數 (day):</label>
                     <input type="number" id="new-week" style="width: 100%; padding: 10px; background: #1a1a2e; color: #fff; border: 1px solid #333; border-radius: 6px;">
                 </div>
                 <div style="margin: 15px 0;">
@@ -172,19 +172,19 @@
         list.innerHTML = courses.map(c => `
             <div style="background: #16213e; padding: 15px; margin: 10px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <strong>Week ${c.week}</strong> - ${c.title}
+                    <strong>Day ${c.day}</strong> - ${c.title}
                     <div style="font-size: 0.85rem; color: #888;">${c.tags.join(', ')} | ${c.time}</div>
                 </div>
                 <div style="display: flex; gap: 5px;">
-                    <button onclick="editCourse(${c.week})" style="background: #ff9800; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">✏️ 編輯</button>
-                    <button onclick="deleteCourse(${c.week})" style="background: #ff5252; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">🗑️ 刪除</button>
+                    <button onclick="editCourse(${c.day})" style="background: #ff9800; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">✏️ 編輯</button>
+                    <button onclick="deleteCourse(${c.day})" style="background: #ff5252; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">🗑️ 刪除</button>
                 </div>
             </div>
         `).join('');
     }
     
     function addCourse() {
-        const week = parseInt(document.getElementById('new-week').value);
+        const day = parseInt(document.getElementById('new-week').value);
         const title = document.getElementById('new-title').value;
         const desc = document.getElementById('new-desc').value;
         const tags = document.getElementById('new-tags').value.split(',').map(t => t.trim());
@@ -192,29 +192,30 @@
         const video = document.getElementById('new-video').value;
         const content = document.getElementById('new-content').value;
         
-        if (!week || !title) {
-            alert('請填寫週次和標題');
+        if (!day || !title) {
+            alert('請填寫天數和標題');
             return;
         }
         
         const courses = getCourses();
         
-        // 檢查週次是否已存在
-        const existing = courses.findIndex(c => c.week === week);
+        // 檢查天數是否已存在
+        const existing = courses.findIndex(c => c.day === day);
         if (existing >= 0) {
-            courses[existing] = { week, title, desc, tags, time, video, content, quiz: [] };
+            courses[existing] = { day, title, desc, tags, time, video, content, quiz: [] };
         } else {
-            courses.push({ week, title, desc, tags, time, video, content, quiz: [] });
+            courses.push({ day, title, desc, tags, time, video, content, quiz: [] });
         }
         
-        // 按週次排序
-        courses.sort((a, b) => a.week - b.week);
+        // 按天數排序
+        courses.sort((a, b) => a.day - b.day);
         
         saveCourses(courses);
         renderCourseList();
         
         // 清空表單
         document.getElementById('new-week').value = '';
+        document.getElementById('new-week').disabled = false;
         document.getElementById('new-title').value = '';
         document.getElementById('new-desc').value = '';
         document.getElementById('new-tags').value = '';
@@ -228,14 +229,14 @@
         alert('課程已儲存！');
     }
     
-    function editCourse(week) {
+    function editCourse(day) {
         const courses = getCourses();
-        const course = courses.find(c => c.week === week);
+        const course = courses.find(c => c.day === day);
         if (!course) return;
         
         // 填入表單
-        document.getElementById('new-week').value = course.week;
-        document.getElementById('new-week').disabled = true; // 週次不能改
+        document.getElementById('new-week').value = course.day;
+        document.getElementById('new-week').disabled = true;
         document.getElementById('new-title').value = course.title;
         document.getElementById('new-desc').value = course.desc;
         document.getElementById('new-tags').value = course.tags.join(', ');
@@ -243,16 +244,15 @@
         document.getElementById('new-video').value = course.video || '';
         document.getElementById('new-content').value = course.content || '';
         
-        // 顯示表單，標題改為編輯
         document.getElementById('add-form').style.display = 'block';
-        document.querySelector('#add-form h3').textContent = '✏️ 編輯課程 (Week ' + week + ')';
+        document.querySelector('#add-form h3').textContent = '✏️ 編輯課程 (Day ' + day + ')';
     }
     
-    function deleteCourse(week) {
-        if (!confirm('確定要刪除 Week ' + week + ' 嗎？')) return;
+    function deleteCourse(day) {
+        if (!confirm('確定要刪除 Day ' + day + ' 嗎？')) return;
         
         let courses = getCourses();
-        courses = courses.filter(c => c.week !== week);
+        courses = courses.filter(c => c.day !== day);
         saveCourses(courses);
         renderCourseList();
         renderCourses();
@@ -286,8 +286,8 @@
         const courses = getCourses();
         const grid = document.getElementById('courses-grid');
         grid.innerHTML = courses.map(course => `
-            <div class="course-card" onclick="showCourse(${course.week})">
-                <div class="week-number">Week ${course.week}</div>
+            <div class="course-card" onclick="showCourse(${course.day})">
+                <div class="week-number">Day ${course.day}</div>
                 <h3>${course.title}</h3>
                 <p>${course.desc}</p>
                 <div class="course-meta">
@@ -298,44 +298,44 @@
         `).join('');
     }
     
-    function showCourse(weekId) {
+    function showCourse(dayId) {
         const courses = getCourses();
-        const course = courses.find(c => c.week === weekId);
+        const course = courses.find(c => c.day === dayId);
         if (!course) return;
         
         const container = document.getElementById('course-container');
         const completed = getProgress();
-        const isCompleted = completed.includes(weekId);
+        const isCompleted = completed.includes(dayId);
         
         container.innerHTML = `
             <section class="course-content" style="display: block;">
                 <button class="back-btn" onclick="showHome()">← 返回列表</button>
                 <div class="course-detail">
-                    <h2>Week ${course.week} - ${course.title}</h2>
+                    <h2>Day ${course.day} - ${course.title}</h2>
                     <div class="meta"><span>⏱ ${course.time}</span><span>🏷️ ${course.tags.join(' · ')}</span></div>
                     <div class="tab-buttons">
-                        <button class="tab-btn active" onclick="switchTab(${weekId}, 'content', this)">📖 教學</button>
-                        <button class="tab-btn" onclick="switchTab(${weekId}, 'quiz', this)">📝 測驗</button>
+                        <button class="tab-btn active" onclick="switchTab(${dayId}, 'content', this)">📖 教學</button>
+                        <button class="tab-btn" onclick="switchTab(${dayId}, 'quiz', this)">📝 測驗</button>
                         ${course.video ? `<a href="${course.video}" target="_blank" class="video-btn">▶ 影片</a>` : ''}
                     </div>
-                    <div class="tab-content active" id="tab-${weekId}-content">
+                    <div class="tab-content active" id="tab-${dayId}-content">
                         ${course.content}
                     </div>
-                    <div class="tab-content" id="tab-${weekId}-quiz">
-                        <div class="quiz-container" id="quiz-${weekId}">
+                    <div class="tab-content" id="tab-${dayId}-quiz">
+                        <div class="quiz-container" id="quiz-${dayId}">
                             ${course.quiz.map((q, i) => `
                                 <div class="quiz-question" data-answer="${q.answer}">
                                     <h4>${i + 1}. ${q.q}</h4>
                                     ${q.options.map((opt, j) => `
-                                        <label class="quiz-option" onclick="selectOption(this, ${weekId}, ${j})">${opt}</label>
+                                        <label class="quiz-option" onclick="selectOption(this, ${dayId}, ${j})">${opt}</label>
                                     `).join('')}
                                 </div>
                             `).join('')}
-                            <button class="btn btn-primary" onclick="submitQuiz(${weekId})">提交答案</button>
-                            <div class="quiz-result" id="result-${weekId}"></div>
+                            <button class="btn btn-primary" onclick="submitQuiz(${dayId})">提交答案</button>
+                            <div class="quiz-result" id="result-${dayId}"></div>
                         </div>
                     </div>
-                    <button class="complete-btn ${isCompleted ? 'completed' : ''}" onclick="toggleComplete(${weekId})">
+                    <button class="complete-btn ${isCompleted ? 'completed' : ''}" onclick="toggleComplete(${dayId})">
                         ${isCompleted ? '✓ 已完成' : '標記為完成'}
                     </button>
                 </div>
@@ -351,22 +351,22 @@
         document.getElementById('course-container').innerHTML = '';
     }
     
-    function toggleComplete(weekId) {
+    function toggleComplete(dayId) {
         let completed = getProgress();
         const btn = document.querySelector('.complete-btn');
-        if (completed.includes(weekId)) {
-            completed = completed.filter(c => c !== weekId);
+        if (completed.includes(dayId)) {
+            completed = completed.filter(c => c !== dayId);
             btn.textContent = '標記為完成';
             btn.classList.remove('completed');
         } else {
-            completed.push(weekId);
+            completed.push(dayId);
             btn.textContent = '✓ 已完成';
             btn.classList.add('completed');
         }
         saveProgress(completed);
     }
 
-    function switchTab(weekId, tab, btn) {
+    function switchTab(dayId, tab, btn) {
         const content = document.getElementById('course-container');
         content.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         content.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -377,23 +377,23 @@
 
     let selectedAnswers = {};
     
-    function selectOption(element, weekId, optionIndex) {
+    function selectOption(element, dayId, optionIndex) {
         const question = element.closest('.quiz-question');
         question.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
         element.classList.add('selected');
-        selectedAnswers[weekId + '-' + question.dataset.answer] = optionIndex;
+        selectedAnswers[dayId + '-' + question.dataset.answer] = optionIndex;
     }
     
-    function submitQuiz(weekId) {
+    function submitQuiz(dayId) {
         const courses = getCourses();
-        const course = courses.find(c => c.week === weekId);
-        const container = document.getElementById('quiz-' + weekId);
+        const course = courses.find(c => c.day === dayId);
+        const container = document.getElementById('quiz-' + dayId);
         const questions = container.querySelectorAll('.quiz-question');
         let correct = 0;
         
         questions.forEach((q, i) => {
             const answer = parseInt(q.dataset.answer);
-            const selected = selectedAnswers[weekId + '-' + answer];
+            const selected = selectedAnswers[dayId + '-' + answer];
             q.querySelectorAll('.quiz-option').forEach((opt, j) => {
                 if (j === answer) opt.classList.add('correct');
                 else if (j === selected && selected !== answer) opt.classList.add('wrong');
@@ -401,7 +401,7 @@
             if (selected === answer) correct++;
         });
         
-        const result = document.getElementById('result-' + weekId);
+        const result = document.getElementById('result-' + dayId);
         const pass = correct >= questions.length * 0.7;
         result.className = 'quiz-result show ' + (pass ? 'pass' : 'fail');
         result.innerHTML = `得分：${correct}/${questions.length} (${pass ? '✅ 通過' : '❌ 需再學習'})`;
