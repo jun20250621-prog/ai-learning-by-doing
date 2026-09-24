@@ -95,22 +95,68 @@ const COURSES = [
         desc: "AI 搜尋、資料查證、研究",
         tags: ["AI", "搜尋"],
         time: "30 分鐘",
-        video: "",
+        video: "https://youtu.be/qE3o03JKsVw",
         content: `
-<h3>📌 學習目標</h3><p>學會使用 Perplexity 進行 AI 驅動的搜尋</p>
-<h3>1. Perplexity 介紹</h3><p>AI 搜尋引擎，會引用來源並提供答案。</p>
-<h3>2. 使用方式</h3>
+<h3>📌 學習目標</h3><p>學會使用 Perplexity 進行 AI 驅動的搜尋，自動引用來源並驗證資訊</p>
+
+<h3>1. 什麼是 Perplexity？</h3>
+<p>Perplexity 是一款 AI 搜尋引擎，結合了傳統搜尋和大型語言模型。它不只是給你連結，而是直接給出答案，並標註來源讓你可以驗證。</p>
+
+<h3>2. 註冊與基本使用</h3>
 <ul>
 <li>前往 <a href="https://www.perplexity.ai" target="_blank">perplexity.ai</a></li>
-<li>輸入問題，AI 會搜尋網路並引用來源</li>
+<li>使用 Google、Apple 或 Email 註冊</li>
+<li>在搜尋框輸入問題，AI 會自動搜尋並整理答案</li>
 </ul>
-<h3>3. 應用場景</h3>
+
+<h3>3. 核心功能</h3>
 <ul>
-<li>學術研究</li>
-<li>事實查證</li>
-<li>快速了解新主題</li>
-</ul>`,
-        quiz: []
+<li><strong>Sources（來源）</strong>：顯示 AI 參考的網頁來源</li>
+<li><strong>Related（相關）</strong>：推薦相關問題</li>
+<li><strong>Copilot（助手）</strong>：付費功能，可追問深入問題</li>
+<li><strong>Focus（聚焦）</strong>：選擇搜尋範圍（學術、YouTube、Reddit 等）</li>
+</ul>
+
+<h3>4. 與 ChatGPT 的差異</h3>
+<table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+<tr style="background:#1a1a2e;"><th style="padding:8px; border:1px solid #333;">功能</th><th style="padding:8px; border:1px solid #333;">Perplexity</th><th style="padding:8px; border:1px solid #333;">ChatGPT</th></tr>
+<tr><td style="padding:8px; border:1px solid #333;">資訊來源</td><td style="padding:8px; border:1px solid #333;">即時網路</td><td style="padding:8px; border:1px solid #333;">訓練資料</td></tr>
+<tr><td style="padding:8px; border:1px solid #333;">引用來源</td><td style="padding:8px; border:1px solid #333;">✅ 自動引用</td><td style="padding:8px; border:1px solid #333;">❌ 不引用</td></tr>
+<tr><td style="padding:8px; border:1px solid #333;">即時性</td><td style="padding:8px; border:1px solid #333;">✅ 最新資訊</td><td style="padding:8px; border:1px solid #333;">⚠️ 有截止日</td></tr>
+</table>
+
+<h3>5. 應用場景</h3>
+<ul>
+<li><strong>學術研究</strong>：快速了解新主題、查找論文</li>
+<li><strong>事實查證</strong>：驗證新聞、謠言是否正確</li>
+<li><strong>產品比較</strong>：比較不同產品的優缺點</li>
+<li><strong>技術問題</strong>：搜尋程式碼、技術文件</li>
+</ul>
+
+<h3>6. 付費方案</h3>
+<ul>
+<li><strong>免費版</strong>：每天 5 次 Copilot 搜尋</li>
+<li><strong>Pro ($20/月)</strong> 無限 Copilot、影印搜尋</li>
+<li><strong>Pro+ ($200/月)</strong> 包含 API 使用量</li>
+</ul>
+
+<h3>7. 範例 Prompt</h3>
+<pre><code># 研究主題
+什麼是 RAG？請說明原理並推薦學習資源
+
+# 事實查證
+2024 年台灣總統是誰？
+
+# 產品比較
+iPhone 15 vs Samsung S24 哪個更值得購買？
+
+# 技術問題
+Python 如何讀取 Excel 檔案？</code></pre>`,
+        quiz: [
+            { q: "Perplexity 和 Google 搜尋的主要差異是？", options: ["A) Perplexity 只顯示圖片", "B) Perplexity 會直接給出答案並引用來源", "C) Google 沒有廣告", "D) 兩者沒有差異"], answer: 1 },
+            { q: "Perplexity 的 Copilot 功能是什麼？", options: ["A) 免費功能", "B) 可追問深入問題的付費功能", "C) 翻譯功能", "D) 儲存功能"], answer: 1 },
+            { q: "Perplexity 的优势是什么？", options: ["A) 只搜尋圖片", "B) 自動引用來源並驗證資訊", "C) 只能搜尋舊聞", "D) 必須付費才能使用"], answer: 1 }
+        ]
     },
     {
         day: 5,
