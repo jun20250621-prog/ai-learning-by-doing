@@ -1,5 +1,5 @@
 # AI Learning by Doing
 
-後端工程師的 LLM 應用入門
+28 天 AI 學習之旅
 
 Website: https://jun20250621-prog.github.io/ai-learning-by-doing/
